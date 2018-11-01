@@ -99,8 +99,8 @@ var Matrix = /** @class */ (function () {
             return mapEach(this.n, function (r) {
                 var offset = r * _this.m;
                 var s = mapEach(_this.m, function (c) { return _this.a[offset + c].toFixed(1); });
-                return "|" + s.join(", ") + "|\n";
-            }).join("");
+                return "|" + s.join(', ') + "|\n";
+            }).join('');
         },
         enumerable: true,
         configurable: true
@@ -113,7 +113,7 @@ var Matrix = /** @class */ (function () {
          */
         get: function () {
             if (!this.isSquare) {
-                throw new TypeError("Not a square matrix");
+                throw new TypeError('Not a square matrix');
             }
             var t = Matrix.from(this); // calculate with copy
             var n = t.n; // shortcut
@@ -181,16 +181,20 @@ var Matrix = /** @class */ (function () {
          */
         get: function () {
             if (!this.isSquare) {
-                throw new TypeError("Not a square matrix");
+                throw new TypeError('Not a square matrix');
             }
             var t = Matrix.from(this); // calculate with copy
             var n = t.n; // shortcut
             var r = Matrix.unit(n);
+            var reduceRow = function (i) {
+                // divide gcd of row[i] of two matrix
+                var reducer = ~~Math.abs(gcd(gcd.apply(void 0, [].slice.call(t.row(i))), gcd.apply(void 0, [].slice.call(r.row(i)))));
+                t = t.rowDivide(i, reducer);
+                r = r.rowDivide(i, reducer);
+            };
             var reduce = function () {
-                // divide gcd of two matrix
-                var reducer = ~~Math.abs(gcd(gcd.apply(void 0, [].slice.call(t.raw)), gcd.apply(void 0, [].slice.call(r.raw))));
-                t = t.divide(reducer);
-                r = r.divide(reducer);
+                for (var i = 0; i < n; ++i)
+                    reduceRow(i);
             };
             var _loop_4 = function (i) {
                 // i-th round make this[i][i] to 1 and this[x][i] to 0
@@ -210,30 +214,25 @@ var Matrix = /** @class */ (function () {
                 if (noSolution) {
                     return { value: undefined };
                 }
-                // make all this[j][i] to 0
-                var l_1 = lcm.apply(void 0, mapEach(n, function (j) { return t.at(j, i); }));
                 var _loop_6 = function (j) {
-                    var scalar = ~~(l_1 / t.at(j, i));
-                    for (var k = 0; k < n; ++k) {
-                        t.replace(j, k, function (x) { return x * scalar; });
-                        r.replace(j, k, function (x) { return x * scalar; });
-                    }
-                };
-                for (var j = 0; j < n; ++j) {
-                    _loop_6(j);
-                }
-                for (var j = 0; j < n; ++j) {
                     if (i === j) {
-                        continue;
+                        return "continue";
                     }
-                    var _loop_7 = function (k) {
-                        t.replace(j, k, function (x) { return x - t.at(i, k); });
-                        r.replace(j, k, function (x) { return x - r.at(i, k); });
-                    };
                     // row[j] -= row[i]
+                    var l_1 = lcm(t.at(i, i), t.at(j, i));
+                    var scalarI = l_1 / t.at(i, i);
+                    var scalarJ = l_1 / t.at(j, i);
+                    var _loop_7 = function (k) {
+                        t.replace(j, k, function (x) { return x * scalarJ - t.at(i, k) * scalarI; });
+                        r.replace(j, k, function (x) { return x * scalarJ - r.at(i, k) * scalarI; });
+                    };
                     for (var k = 0; k < n; ++k) {
                         _loop_7(k);
                     }
+                };
+                // make all this[j][i] to 0
+                for (var j = 0; j < n; ++j) {
+                    _loop_6(j);
                 }
                 reduce();
             };
@@ -254,7 +253,6 @@ var Matrix = /** @class */ (function () {
             for (var i = 0; i < n; ++i) {
                 _loop_5(i);
             }
-            reduce();
             return r;
         },
         enumerable: true,
@@ -281,19 +279,19 @@ var Matrix = /** @class */ (function () {
     Matrix.fromTwoDimArray = function (arr) {
         var n = arr.length;
         if (n === 0) {
-            throw new TypeError("Should have at least one row");
+            throw new TypeError('Should have at least one row');
         }
         var m = arr[0].length;
         for (var i = 0; i < n; ++i) {
             if (arr[i].length !== m) {
-                throw new TypeError("All row should have same columns");
+                throw new TypeError('All row should have same columns');
             }
         }
         var r = new Matrix(n, m);
         for (var i = 0; i < n; ++i) {
             for (var j = 0; j < m; ++j) {
                 var t = arr[i][j];
-                if (typeof t === "number") {
+                if (typeof t === 'number') {
                     r.change(i, j, t);
                 }
                 else {
@@ -385,7 +383,7 @@ var Matrix = /** @class */ (function () {
         }
     };
     Matrix.prototype.multiply = function (x) {
-        if (typeof x === "number") {
+        if (typeof x === 'number') {
             return this.multiplyScalar(x);
         }
         else {
@@ -404,7 +402,7 @@ var Matrix = /** @class */ (function () {
     Matrix.prototype.multiplyMatrix = function (x) {
         var _this = this;
         if (this.m !== x.rows) {
-            throw new TypeError("Excepted left-side columns number equal to right-side row number");
+            throw new TypeError('Excepted left-side columns number equal to right-side row number');
         }
         var r = new Matrix(this.n, x.cols);
         var _loop_8 = function (i) {
@@ -428,13 +426,23 @@ var Matrix = /** @class */ (function () {
     };
     Matrix.prototype.divide = function (x) {
         if (!notZero(x)) {
-            throw new EvalError("Divided by zero");
+            throw new EvalError('Divided by zero');
         }
         var r = Matrix.from(this);
         for (var i = 0; i < this.n; ++i) {
             for (var j = 0; j < this.m; ++j) {
                 r.replace(i, j, function (t) { return t / x; });
             }
+        }
+        return r;
+    };
+    Matrix.prototype.rowDivide = function (i, x) {
+        if (!notZero(x)) {
+            throw new EvalError('Divided by zero');
+        }
+        var r = Matrix.from(this);
+        for (var j = 0; j < this.m; ++j) {
+            r.replace(i, j, function (t) { return t / x; });
         }
         return r;
     };

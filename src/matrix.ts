@@ -124,14 +124,18 @@ export class Matrix {
     const n = t.n; // shortcut
     let r = Matrix.unit(n);
 
-    const reduce = () => {
-      // divide gcd of two matrix
+    const reduceRow = (i: number) => {
+      // divide gcd of row[i] of two matrix
       const reducer = ~~Math.abs(gcd(
-        gcd(...[].slice.call(t.raw)),
-        gcd(...[].slice.call(r.raw))
+        gcd(...[].slice.call(t.row(i))),
+        gcd(...[].slice.call(r.row(i))),
       ));
-      t = t.divide(reducer);
-      r = r.divide(reducer);
+      t = t.rowDivide(i, reducer);
+      r = r.rowDivide(i, reducer);
+    };
+
+    const reduce = () => {
+      for (let i = 0; i < n; ++i) reduceRow(i);
     };
 
     for (let i = 0; i < n; ++i) {
@@ -153,20 +157,16 @@ export class Matrix {
       if (noSolution) { return undefined; }
 
       // make all this[j][i] to 0
-      const l = lcm(...mapEach(n, j => t.at(j, i)));
-      for (let j = 0; j < n; ++j) {
-        const scalar = ~~(l / t.at(j, i));
-        for (let k = 0; k < n; ++k) {
-          t.replace(j, k, x => x * scalar);
-          r.replace(j, k, x => x * scalar);
-        }
-      }
+
       for (let j = 0; j < n; ++j) {
         if (i === j) { continue; }
         // row[j] -= row[i]
+        const l = lcm(t.at(i, i), t.at(j, i));
+        const scalarI = l / t.at(i, i);
+        const scalarJ = l / t.at(j, i);
         for (let k = 0; k < n; ++k) {
-          t.replace(j, k, x => x - t.at(i, k));
-          r.replace(j, k, x => x - r.at(i, k));
+          t.replace(j, k, x => x * scalarJ - t.at(i, k) * scalarI);
+          r.replace(j, k, x => x * scalarJ - r.at(i, k) * scalarI);
         }
       }
       reduce();
@@ -180,7 +180,6 @@ export class Matrix {
         r.replace(i, j, x => x * scalar);
       }
     }
-    reduce();
     return r;
   }
 
@@ -352,6 +351,15 @@ export class Matrix {
       for (let j = 0; j < this.m; ++j) {
         r.replace(i, j, t => t / x);
       }
+    }
+    return r;
+  }
+
+  public rowDivide(i: number, x: number): Matrix {
+    if (!notZero(x)) { throw new EvalError('Divided by zero'); }
+    const r = Matrix.from(this);
+    for (let j = 0; j < this.m; ++j) {
+      r.replace(i, j, t => t / x);
     }
     return r;
   }
