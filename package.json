@@ -1,0 +1,17 @@
+{
+  "name": "hill-cipher.js",
+  "version": "1.0.0",
+  "description": "A JavaScript implementation of Hill Cipher",
+  "main": "dist/index.js",
+  "scripts": {
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "debug": "node --inspect-brk dist/index.js"
+  },
+  "author": "SgLy",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.4"
+  }
+}

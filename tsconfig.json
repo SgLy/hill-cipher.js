@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "alwaysStrict": true,
+    "sourceMap": true,
+    "target": "es5",
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "newLine": "LF"
+  }
+}
