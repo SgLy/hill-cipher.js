@@ -50,6 +50,12 @@
       true,
       "LF"
     ],
-    "trailing-comma": true
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always",
+        "singleline": "never"
+      }
+    ]
   }
 }

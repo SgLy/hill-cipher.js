@@ -1,49 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var EPS = 1e-4;
-var notZero = function (x) { return Math.abs(x) > EPS; };
-var gcd = function () {
-    var n = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        n[_i] = arguments[_i];
-    }
-    var gcd2 = function (x, y) {
-        var _a, _b;
-        var a = x;
-        var b = y;
-        if (a < b)
-            _a = [b, a], a = _a[0], b = _a[1];
-        while (b !== 0)
-            _b = [b, a % b], a = _b[0], b = _b[1];
-        return a;
-    };
-    if (n.length === 0) {
-        return 0;
-    }
-    if (n.length === 1) {
-        return n[0];
-    }
-    return n.reduce(function (s, v) { return gcd2(s, v); });
-};
-var lcm = function () {
-    var x = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        x[_i] = arguments[_i];
-    }
-    var lcm2 = function (a, b) {
-        return ~~(a * b / gcd(a, b));
-    };
-    if (x.length === 0) {
-        return 0;
-    }
-    if (x.length === 1) {
-        return x[0];
-    }
-    return x.reduce(function (s, v) { return lcm2(s, v); });
-};
-var mapEach = function (n, f) {
-    return Array.apply(null, { length: n }).map(function (_, i) { return f(i); });
-};
+var util_1 = require("./util");
 var Matrix = /** @class */ (function () {
     /**
      * new zero Matrix from rows count and columns count
@@ -96,9 +53,9 @@ var Matrix = /** @class */ (function () {
     Object.defineProperty(Matrix.prototype, "string", {
         get: function () {
             var _this = this;
-            return mapEach(this.n, function (r) {
+            return util_1.mapEach(this.n, function (r) {
                 var offset = r * _this.m;
-                var s = mapEach(_this.m, function (c) { return _this.a[offset + c].toFixed(1); });
+                var s = util_1.mapEach(_this.m, function (c) { return _this.a[offset + c].toFixed(1); });
                 return "|" + s.join(', ') + "|\n";
             }).join('');
         },
@@ -126,7 +83,7 @@ var Matrix = /** @class */ (function () {
                 // if all this[j][i] === 0, no solution
                 var noSolution = true;
                 for (var j = i; j < n; ++j) {
-                    if (notZero(t.at(j, i))) {
+                    if (util_1.notZero(t.at(j, i))) {
                         noSolution = false;
                         t.swapRow(i, j);
                         r.swapRow(i, j);
@@ -188,7 +145,7 @@ var Matrix = /** @class */ (function () {
             var r = Matrix.unit(n);
             var reduceRow = function (i) {
                 // divide gcd of row[i] of two matrix
-                var reducer = ~~Math.abs(gcd(gcd.apply(void 0, [].slice.call(t.row(i))), gcd.apply(void 0, [].slice.call(r.row(i)))));
+                var reducer = ~~Math.abs(util_1.gcd(util_1.gcd.apply(void 0, [].slice.call(t.row(i))), util_1.gcd.apply(void 0, [].slice.call(r.row(i)))));
                 t = t.rowDivide(i, reducer);
                 r = r.rowDivide(i, reducer);
             };
@@ -204,7 +161,7 @@ var Matrix = /** @class */ (function () {
                 // if all this[j][i] === 0, no solution
                 var noSolution = true;
                 for (var j = i; j < n; ++j) {
-                    if (notZero(t.at(j, i))) {
+                    if (util_1.notZero(t.at(j, i))) {
                         noSolution = false;
                         t.swapRow(i, j);
                         r.swapRow(i, j);
@@ -219,7 +176,7 @@ var Matrix = /** @class */ (function () {
                         return "continue";
                     }
                     // row[j] -= row[i]
-                    var l_1 = lcm(t.at(i, i), t.at(j, i));
+                    var l_1 = util_1.lcm(t.at(i, i), t.at(j, i));
                     var scalarI = l_1 / t.at(i, i);
                     var scalarJ = l_1 / t.at(j, i);
                     var _loop_7 = function (k) {
@@ -242,7 +199,7 @@ var Matrix = /** @class */ (function () {
                     return state_2.value;
             }
             // make all this[i][i] to the same
-            var l = ~~Math.abs(lcm.apply(void 0, mapEach(n, function (i) { return t.at(i, i); })));
+            var l = ~~Math.abs(util_1.lcm.apply(void 0, util_1.mapEach(n, function (i) { return t.at(i, i); })));
             var _loop_5 = function (i) {
                 var scalar = ~~(l / t.at(i, i));
                 for (var j = 0; j < n; ++j) {
@@ -425,7 +382,7 @@ var Matrix = /** @class */ (function () {
         return r;
     };
     Matrix.prototype.divide = function (x) {
-        if (!notZero(x)) {
+        if (!util_1.notZero(x)) {
             throw new EvalError('Divided by zero');
         }
         var r = Matrix.from(this);
@@ -437,7 +394,7 @@ var Matrix = /** @class */ (function () {
         return r;
     };
     Matrix.prototype.rowDivide = function (i, x) {
-        if (!notZero(x)) {
+        if (!util_1.notZero(x)) {
             throw new EvalError('Divided by zero');
         }
         var r = Matrix.from(this);
@@ -471,5 +428,5 @@ var Matrix = /** @class */ (function () {
     };
     return Matrix;
 }());
-exports.Matrix = Matrix;
+exports.default = Matrix;
 //# sourceMappingURL=matrix.js.map
