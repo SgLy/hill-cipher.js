@@ -58,8 +58,8 @@ export class Matrix {
     return mapEach(this.n, r => {
       const offset = r * this.m;
       const s = mapEach(this.m, c => this.a[offset + c].toFixed(1));
-      return `|${s.join(", ")}|\n`;
-    }).join("");
+      return `|${s.join(', ')}|\n`;
+    }).join('');
   }
 
   /**
@@ -68,7 +68,7 @@ export class Matrix {
    * if it is a singular matrix, `undefined` returned
    */
   get inverse(): Matrix | undefined {
-    if (!this.isSquare) { throw new TypeError("Not a square matrix"); }
+    if (!this.isSquare) { throw new TypeError('Not a square matrix'); }
     const t = Matrix.from(this); // calculate with copy
     const n = t.n; // shortcut
     const r = Matrix.unit(n);
@@ -119,7 +119,7 @@ export class Matrix {
    * like adjugate matrix, but calculated in inverse way
    */
   get integerInverse(): Matrix | undefined {
-    if (!this.isSquare) { throw new TypeError("Not a square matrix"); }
+    if (!this.isSquare) { throw new TypeError('Not a square matrix'); }
     let t = Matrix.from(this); // calculate with copy
     const n = t.n; // shortcut
     let r = Matrix.unit(n);
@@ -193,27 +193,25 @@ export class Matrix {
     return m;
   }
 
-  public static from(arr: (number | string)[][]): Matrix;
-  public static from(o: Matrix): Matrix;
   public static from(x: (number | string)[][] | Matrix): Matrix {
     if (x instanceof Matrix) { return this.fromMatrix(x); } else { return this.fromTwoDimArray(x); }
   }
   public static fromTwoDimArray(arr: (number | string)[][]): Matrix {
     const n = arr.length;
     if (n === 0) {
-      throw new TypeError("Should have at least one row");
+      throw new TypeError('Should have at least one row');
     }
     const m = arr[0].length;
     for (let i = 0; i < n; ++i) {
       if (arr[i].length !== m) {
-        throw new TypeError("All row should have same columns");
+        throw new TypeError('All row should have same columns');
       }
     }
     const r = new Matrix(n, m);
     for (let i = 0; i < n; ++i) {
       for (let j = 0; j < m; ++j) {
         const t = arr[i][j];
-        if (typeof t === "number") { r.change(i, j, t); } else { r.change(i, j, parseFloat(t)); }
+        if (typeof t === 'number') { r.change(i, j, t); } else { r.change(i, j, parseFloat(t)); }
       }
     }
     return r;
@@ -320,7 +318,7 @@ export class Matrix {
   }
 
   public multiply(x: number | Matrix): Matrix {
-    if (typeof x === "number") { return this.multiplyScalar(x); } else { return this.multiplyMatrix(x); }
+    if (typeof x === 'number') { return this.multiplyScalar(x); } else { return this.multiplyMatrix(x); }
   }
   public multiplyScalar(x: number): Matrix {
     const r = Matrix.from(this);
@@ -333,7 +331,7 @@ export class Matrix {
   }
   public multiplyMatrix(x: Matrix): Matrix {
     if (this.m !== x.rows) {
-      throw new TypeError("Excepted left-side columns number equal to right-side row number");
+      throw new TypeError('Excepted left-side columns number equal to right-side row number');
     }
     const r = new Matrix(this.n, x.cols);
 
@@ -348,7 +346,7 @@ export class Matrix {
   }
 
   public divide(x: number): Matrix {
-    if (!notZero(x)) { throw new EvalError("Divided by zero"); }
+    if (!notZero(x)) { throw new EvalError('Divided by zero'); }
     const r = Matrix.from(this);
     for (let i = 0; i < this.n; ++i) {
       for (let j = 0; j < this.m; ++j) {

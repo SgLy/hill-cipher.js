@@ -7,12 +7,20 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "启动程序",
-      "program": "${workspaceFolder}\\dist\\index.js",
-      "preLaunchTask": "tsc: build - tsconfig.json",
+      "program": "${workspaceRoot}/src/index.ts",
       "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+        "${workspaceRoot}/dist/**/*.js"
+      ],
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "cwd": "${workspaceRoot}",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "openOnFirstSessionStart",
+      "preLaunchTask": "compile",
+      "name": "DEBUG"
     }
   ]
 }

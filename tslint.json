@@ -23,6 +23,7 @@
       "avoid-escape",
       "avoid-template"
     ],
+    "no-shadowed-variable": false,
     "no-empty-interface": true,
     "no-magic-numbers": true,
     "no-parameter-reassignment": true,
