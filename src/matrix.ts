@@ -336,6 +336,17 @@ export default class Matrix {
     return r;
   }
 
+  public modulo(x: number): Matrix {
+    if (!notZero(x)) { throw new EvalError('Divided by zero'); }
+    const r = Matrix.from(this);
+    for (let i = 0; i < this.n; ++i) {
+      for (let j = 0; j < this.m; ++j) {
+        r.replace(i, j, t => (~~t % x + x) % x);
+      }
+    }
+    return r;
+  }
+
   public rowDivide(i: number, x: number): Matrix {
     if (!notZero(x)) { throw new EvalError('Divided by zero'); }
     const r = Matrix.from(this);

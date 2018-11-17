@@ -393,6 +393,18 @@ var Matrix = /** @class */ (function () {
         }
         return r;
     };
+    Matrix.prototype.modulo = function (x) {
+        if (!util_1.notZero(x)) {
+            throw new EvalError('Divided by zero');
+        }
+        var r = Matrix.from(this);
+        for (var i = 0; i < this.n; ++i) {
+            for (var j = 0; j < this.m; ++j) {
+                r.replace(i, j, function (t) { return (~~t % x + x) % x; });
+            }
+        }
+        return r;
+    };
     Matrix.prototype.rowDivide = function (i, x) {
         if (!util_1.notZero(x)) {
             throw new EvalError('Divided by zero');
