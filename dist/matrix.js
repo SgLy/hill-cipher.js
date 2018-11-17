@@ -145,7 +145,7 @@ var Matrix = /** @class */ (function () {
             var r = Matrix.unit(n);
             var reduceRow = function (i) {
                 // divide gcd of row[i] of two matrix
-                var reducer = ~~Math.abs(util_1.gcd(util_1.gcd.apply(void 0, [].slice.call(t.row(i))), util_1.gcd.apply(void 0, [].slice.call(r.row(i)))));
+                var reducer = Math.floor(Math.abs(util_1.gcd(util_1.gcd.apply(void 0, [].slice.call(t.row(i))), util_1.gcd.apply(void 0, [].slice.call(r.row(i))))));
                 t = t.rowDivide(i, reducer);
                 r = r.rowDivide(i, reducer);
             };
@@ -172,9 +172,10 @@ var Matrix = /** @class */ (function () {
                     return { value: undefined };
                 }
                 var _loop_6 = function (j) {
-                    if (i === j) {
+                    if (i === j)
                         return "continue";
-                    }
+                    if (util_1.isZero(t.at(j, i)))
+                        return "continue";
                     // row[j] -= row[i]
                     var l_1 = util_1.lcm(t.at(i, i), t.at(j, i));
                     var scalarI = l_1 / t.at(i, i);
@@ -199,9 +200,9 @@ var Matrix = /** @class */ (function () {
                     return state_2.value;
             }
             // make all this[i][i] to the same
-            var l = ~~Math.abs(util_1.lcm.apply(void 0, util_1.mapEach(n, function (i) { return t.at(i, i); })));
+            var l = Math.floor(Math.abs(util_1.lcm.apply(void 0, util_1.mapEach(n, function (i) { return t.at(i, i); }))));
             var _loop_5 = function (i) {
-                var scalar = ~~(l / t.at(i, i));
+                var scalar = l / t.at(i, i);
                 for (var j = 0; j < n; ++j) {
                     t.replace(i, j, function (x) { return x * scalar; });
                     r.replace(i, j, function (x) { return x * scalar; });
@@ -382,7 +383,7 @@ var Matrix = /** @class */ (function () {
         return r;
     };
     Matrix.prototype.divide = function (x) {
-        if (!util_1.notZero(x)) {
+        if (util_1.isZero(x)) {
             throw new EvalError('Divided by zero');
         }
         var r = Matrix.from(this);
@@ -394,19 +395,19 @@ var Matrix = /** @class */ (function () {
         return r;
     };
     Matrix.prototype.modulo = function (x) {
-        if (!util_1.notZero(x)) {
+        if (util_1.isZero(x)) {
             throw new EvalError('Divided by zero');
         }
         var r = Matrix.from(this);
         for (var i = 0; i < this.n; ++i) {
             for (var j = 0; j < this.m; ++j) {
-                r.replace(i, j, function (t) { return (~~t % x + x) % x; });
+                r.replace(i, j, function (t) { return Math.floor(t % x + x) % x; });
             }
         }
         return r;
     };
     Matrix.prototype.rowDivide = function (i, x) {
-        if (!util_1.notZero(x)) {
+        if (util_1.isZero(x)) {
             throw new EvalError('Divided by zero');
         }
         var r = Matrix.from(this);

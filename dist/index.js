@@ -5,8 +5,4 @@ var cipher = new hill_cipher_1.default({
     key: 'this is a test message.',
     template: ' .,!?abcdefghijklmnopqrstuvwxyz0123456789',
 });
-var s = cipher.encrypt('test');
-console.log(s);
-var x = cipher.decrypt(s);
-console.log(x);
 //# sourceMappingURL=index.js.map

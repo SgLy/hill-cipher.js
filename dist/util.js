@@ -20,7 +20,7 @@ exports.twoDimArrayFactory = function (rows, cols, value) {
 };
 function leastLargerSquare(x) {
     // tslint:disable-next-line:no-magic-numbers
-    return ~~(Math.pow(Math.ceil(Math.sqrt(x)), 2));
+    return Math.floor(Math.pow(Math.ceil(Math.sqrt(x)), 2));
 }
 exports.leastLargerSquare = leastLargerSquare;
 var EPS = 1e-4;
@@ -55,7 +55,7 @@ exports.lcm = function () {
         x[_i] = arguments[_i];
     }
     var lcm2 = function (a, b) {
-        return ~~(a * b / exports.gcd(a, b));
+        return Math.floor(a * b / exports.gcd(a, b));
     };
     if (x.length === 0) {
         return 0;
@@ -66,13 +66,13 @@ exports.lcm = function () {
     return x.reduce(function (s, v) { return lcm2(s, v); });
 };
 exports.extendedGcd = function (a, b) {
-    if (~~b === 0) {
-        return { gcd: ~~a, x: 1, y: 0 };
+    if (Math.floor(b) === 0) {
+        return { gcd: Math.floor(a), x: 1, y: 0 };
     }
-    var _a = exports.extendedGcd(~~b, ~~a % ~~b), gcd = _a.gcd, r = __rest(_a, ["gcd"]);
+    var _a = exports.extendedGcd(Math.floor(b), Math.floor(a) % Math.floor(b)), gcd = _a.gcd, r = __rest(_a, ["gcd"]);
     var x = r.y;
     var y = r.x;
-    y -= ~~x * ~~(~~a / ~~b);
+    y -= Math.floor(x * Math.floor(Math.floor(a) / Math.floor(b)));
     return { gcd: gcd, x: x, y: y };
 };
 //# sourceMappingURL=util.js.map

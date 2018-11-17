@@ -1,5 +1,6 @@
 import {
   gcd,
+  isZero,
   lcm,
   mapEach,
   notZero,
@@ -107,10 +108,10 @@ export default class Matrix {
 
     const reduceRow = (i: number) => {
       // divide gcd of row[i] of two matrix
-      const reducer = ~~Math.abs(gcd(
+      const reducer = Math.floor(Math.abs(gcd(
         gcd(...[].slice.call(t.row(i))),
         gcd(...[].slice.call(r.row(i))),
-      ));
+      )));
       t = t.rowDivide(i, reducer);
       r = r.rowDivide(i, reducer);
     };
@@ -138,9 +139,9 @@ export default class Matrix {
       if (noSolution) { return undefined; }
 
       // make all this[j][i] to 0
-
       for (let j = 0; j < n; ++j) {
-        if (i === j) { continue; }
+        if (i === j) continue;
+        if (isZero(t.at(j, i))) continue;
         // row[j] -= row[i]
         const l = lcm(t.at(i, i), t.at(j, i));
         const scalarI = l / t.at(i, i);
@@ -153,9 +154,9 @@ export default class Matrix {
       reduce();
     }
     // make all this[i][i] to the same
-    const l = ~~Math.abs(lcm(...mapEach(n, i => t.at(i, i))));
+    const l = Math.floor(Math.abs(lcm(...mapEach(n, i => t.at(i, i)))));
     for (let i = 0; i < n; ++i) {
-      const scalar = ~~(l / t.at(i, i));
+      const scalar = l / t.at(i, i);
       for (let j = 0; j < n; ++j) {
         t.replace(i, j, x => x * scalar);
         r.replace(i, j, x => x * scalar);
@@ -293,7 +294,7 @@ export default class Matrix {
     const I = i * this.m;
     const J = j * this.m;
     for (let k = 0; k < this.m; ++k) {
-      [ this.a[I + k], this.a[J + k] ] = [ this.a[J + k], this.a[I + k] ];
+      [this.a[I + k], this.a[J + k]] = [this.a[J + k], this.a[I + k]];
     }
   }
 
@@ -326,7 +327,9 @@ export default class Matrix {
   }
 
   public divide(x: number): Matrix {
-    if (!notZero(x)) { throw new EvalError('Divided by zero'); }
+    if (isZero(x)) {
+      throw new EvalError('Divided by zero');
+    }
     const r = Matrix.from(this);
     for (let i = 0; i < this.n; ++i) {
       for (let j = 0; j < this.m; ++j) {
@@ -337,18 +340,22 @@ export default class Matrix {
   }
 
   public modulo(x: number): Matrix {
-    if (!notZero(x)) { throw new EvalError('Divided by zero'); }
+    if (isZero(x)) {
+      throw new EvalError('Divided by zero');
+    }
     const r = Matrix.from(this);
     for (let i = 0; i < this.n; ++i) {
       for (let j = 0; j < this.m; ++j) {
-        r.replace(i, j, t => (~~t % x + x) % x);
+        r.replace(i, j, t => Math.floor(t % x + x) % x);
       }
     }
     return r;
   }
 
   public rowDivide(i: number, x: number): Matrix {
-    if (!notZero(x)) { throw new EvalError('Divided by zero'); }
+    if (isZero(x)) {
+      throw new EvalError('Divided by zero');
+    }
     const r = Matrix.from(this);
     for (let j = 0; j < this.m; ++j) {
       r.replace(i, j, t => t / x);

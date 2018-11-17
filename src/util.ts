@@ -11,7 +11,7 @@ export const twoDimArrayFactory = <T>(rows: number, cols: number, value?: T): T[
 
 export function leastLargerSquare(x: number) {
   // tslint:disable-next-line:no-magic-numbers
-  return ~~(Math.pow(Math.ceil(Math.sqrt(x)), 2));
+  return Math.floor(Math.pow(Math.ceil(Math.sqrt(x)), 2));
 }
 
 const EPS: number = 1e-4;
@@ -33,20 +33,20 @@ export const gcd = (...n: number[]) => {
 
 export const lcm = (...x: number[]) => {
   const lcm2 = (a: number, b: number) => {
-    return ~~(a * b / gcd(a, b));
+    return Math.floor(a * b / gcd(a, b));
   };
   if (x.length === 0) { return 0; }
   if (x.length === 1) { return x[0]; }
   return x.reduce((s, v) => lcm2(s, v));
 };
 
-export const extendedGcd = (a: number, b: number): {x: number, y: number, gcd: number} => {
-  if (~~b === 0) {
-    return { gcd: ~~a, x: 1, y: 0 };
+export const extendedGcd = (a: number, b: number): { x: number, y: number, gcd: number } => {
+  if (Math.floor(b) === 0) {
+    return { gcd: Math.floor(a), x: 1, y: 0 };
   }
-  const {gcd, ...r} = extendedGcd(~~b, ~~a % ~~b);
+  const { gcd, ...r } = extendedGcd(Math.floor(b), Math.floor(a) % Math.floor(b));
   const x = r.y;
   let y = r.x;
-  y -= ~~x * ~~(~~a / ~~b);
+  y -= Math.floor(x * Math.floor(Math.floor(a) / Math.floor(b)));
   return { gcd, x, y };
 };
