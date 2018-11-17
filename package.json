@@ -6,12 +6,17 @@
   "scripts": {
     "watch": "tsc --watch",
     "start": "node dist/index.js",
-    "debug": "node --inspect-brk dist/index.js"
+    "debug": "node --inspect-brk dist/index.js",
+    "test": "node test/index.js"
   },
   "author": "SgLy",
   "license": "GPL-3.0",
   "dependencies": {
     "tslint": "^5.11.0",
     "typescript": "^3.1.4"
+  },
+  "devDependencies": {
+    "chalk": "^2.4.1",
+    "progress": "^2.0.1"
   }
 }
